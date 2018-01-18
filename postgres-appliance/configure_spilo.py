@@ -117,6 +117,7 @@ bootstrap:
       use_pg_rewind: true
       use_slots: true
       parameters:
+        default_transaction_isolation: 'REPEATABLE READ'
         archive_mode: "on"
         archive_timeout: 1800s
         wal_level: hot_standby
@@ -199,7 +200,8 @@ postgresql:
     log_file_mode: '0644'
     log_rotation_age: '1d'
     log_truncate_on_rotation: 'on'
-    ssl: 'on'
+    default_transaction_isolation: 'REPEATABLE READ'
+    ssl: 'off'
     ssl_cert_file: {{SSL_CERTIFICATE_FILE}}
     ssl_key_file: {{SSL_PRIVATE_KEY_FILE}}
     shared_preload_libraries: 'bg_mon,pg_stat_statements,pg_cron,set_user,pgextwlist'
@@ -214,9 +216,8 @@ postgresql:
     {{#PAM_OAUTH2}}
     - hostssl all             +{{HUMAN_ROLE}}    ::1/128            pam
     {{/PAM_OAUTH2}}
-    - host    all             all                ::1/128            md5
+    - host    all             all                all                md5
     - hostssl replication     {{PGUSER_STANDBY}} all                md5
-    - hostnossl all           all                all                reject
     {{#PAM_OAUTH2}}
     - hostssl all             +{{HUMAN_ROLE}}    all                pam
     {{/PAM_OAUTH2}}
